@@ -36,7 +36,7 @@ var tableId = document.querySelectorAll("[id^=__table]")[0].id;
 var oTable =  sap.ui.getCore().byId(tableId);
 var data = oTable.getData();
 var details = []
-var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdate', 'TimeInQueue', 'failedStep']];
+var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger']];
 for (var i in data.data) {
      var runUid = data.data[i].runUid; 
      document.title = 'Get ' + runUid;
@@ -55,12 +55,14 @@ for (var i in data.data) {
 			"'" + result.runLogResponse[0].content.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(","),
 			result.runLogResponse[0].content.SO_Data.Line_Item_Count,
 			Math.ceil(result.jobRunResponse.executionTime / 1000),
-			result.jobRunResponse.lastUpdated,
+			new Date(result.jobRunResponse.lastUpdated).toDateString(),
+			new Date(result.jobRunResponse.lastUpdated).toTimeString().substr(0,8),
 			result.runStatusResponse.length > 2 ? Math.ceil((Date.parse(result.runStatusResponse[1].updated) - Date.parse(result.runStatusResponse[0].updated)) / 1000) : 'n/a',
-			result.jobRunResponse.runStatus == 'failed' ? result.runStatusResponse[2].detail : ''
+			result.jobRunResponse.runStatus == 'failed' ? result.runStatusResponse[2].detail : '',
+			result.jobRunResponse.triggerName
 		 ]);    
      }});
      document.title='Done';
-	 console.log(details);
+     console.log(details);
 }
-exportToCsv(details[0].jobRunResponse.lastUpdated.substr(0,10) + '.csv', detailsCsv);
+exportToCsv(new Date(details[0].jobRunResponse.lastUpdated).toDateString() + '.csv', detailsCsv);
