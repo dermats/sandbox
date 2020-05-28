@@ -36,7 +36,7 @@ var tableId = document.querySelectorAll("[id^=__table]")[0].id;
 var oTable =  sap.ui.getCore().byId(tableId);
 var data = oTable.getData();
 var details = []
-var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger']];
+var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger', 'BotStatus']];
 for (var i in data.data) {
      var runUid = data.data[i].runUid; 
      document.title = 'Get ' + runUid;
@@ -59,10 +59,11 @@ for (var i in data.data) {
 			new Date(result.jobRunResponse.lastUpdated).toTimeString().substr(0,8),
 			result.runStatusResponse.length > 2 ? Math.ceil((Date.parse(result.runStatusResponse[1].updated) - Date.parse(result.runStatusResponse[0].updated)) / 1000) : 'n/a',
 			result.jobRunResponse.runStatus == 'failed' ? result.runStatusResponse[2].detail : '',
-			result.jobRunResponse.triggerName
+			result.jobRunResponse.triggerName,
+			result.runLogResponse[0].content.E5ZData.Bot_Status
 		 ]);    
      }});
      document.title='Done';
-     console.log(details);
+	 console.log(details);
 }
 exportToCsv(new Date(details[0].jobRunResponse.lastUpdated).toDateString() + '.csv', detailsCsv);
