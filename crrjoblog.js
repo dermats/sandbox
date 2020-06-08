@@ -47,21 +47,21 @@ for (var i in data.data) {
                   result.runLogResponse[0].content = result2;
              }});
          }    
-		 details.push(result);
+         details.push(result);
          detailsCsv.push([
 			runUid, 
 			result.jobRunResponse.runStatus, 
 			result.runLogResponse[0].content.Input.SONo,
-			"'" + result.runLogResponse[0].content.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(","),
-			result.runLogResponse[0].content.SO_Data.Line_Item_Count,
+			result.runLogResponse[0].content.SO_Data ? "'" + result.runLogResponse[0].content.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(",") : '',
+			result.runLogResponse[0].content.SO_Data ? result.runLogResponse[0].content.SO_Data.Line_Item_Count : '',
 			Math.ceil(result.jobRunResponse.executionTime / 1000),
 			new Date(result.jobRunResponse.lastUpdated).toDateString(),
 			new Date(result.jobRunResponse.lastUpdated).toTimeString().substr(0,8),
 			result.runStatusResponse.length > 2 ? Math.ceil((Date.parse(result.runStatusResponse[1].updated) - Date.parse(result.runStatusResponse[0].updated)) / 1000) : 'n/a',
-			result.jobRunResponse.runStatus == 'failed' ? result.runStatusResponse[2].detail : '',
+			result.jobRunResponse.runStatus === 'failed' ? result.runStatusResponse[2].detail : '',
 			result.jobRunResponse.triggerName,
-			result.runLogResponse[0].content.E5ZData.Bot_Status,
-		 	result.runLogResponse[0].content.SO_Data.Total_Items
+			result.runLogResponse[0].content.E5ZData ? result.runLogResponse[0].content.E5ZData.Bot_Status : '',
+		 	result.runLogResponse[0].content.SO_Data ? result.runLogResponse[0].content.SO_Data.Total_Items : ''
 		 ]);    
      }});
      document.title='Done';
