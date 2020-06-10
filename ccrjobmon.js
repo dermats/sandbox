@@ -17,3 +17,4 @@ window.setInterval(function () {
         prevNum = divJobs.innerText;
     }
 }, 3000);
+refreshBtn.setText('Auto-Refresh ON');
