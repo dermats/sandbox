@@ -41,28 +41,28 @@ for (var i in data.data) {
      var runUid = data.data[i].runUid; 
      document.title = 'Get ' + runUid;
      jQuery.ajax({async:false, url: '/api/control/v1/runmonitor/jobs/' + runUid + '/detail', success: function(result) {
-         var logRef = result.runLogResponse.length > 0 ? result.runLogResponse[0].contentRef : false;
+         var logRef = result.runLogResponse && result.runLogResponse.responses && result.runLogResponse.responses.length > 0 ? result.runLogResponse.responses[0].contentRef : false;
          if (logRef) {
              jQuery.ajax({async:false, url: '/api/control/v1/runmonitor/resources/' + logRef, success: function(result2) {
-                  result.runLogResponse[0].content = result2;
+                  result.details = result2;
              }});
          }    
          details.push(result);
          detailsCsv.push([
 			runUid, 
 			result.jobRunResponse.runStatus, 
-			result.runLogResponse[0] && result.runLogResponse[0].content ? result.runLogResponse[0].content.Input.SONo : '',
-			result.runLogResponse[0] && result.runLogResponse[0].content && result.runLogResponse[0].content.SO_Data ? "'" + result.runLogResponse[0].content.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(",") : '',
-			result.runLogResponse[0] && result.runLogResponse[0].content && result.runLogResponse[0].content.SO_Data ? result.runLogResponse[0].content.SO_Data.Line_Item_Count : '',
+			result.details ? result.details.Input.SONo : '',
+			result.details && result.details.SO_Data ? "'" + result.details.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(",") : '',
+			result.details && result.details.SO_Data ? result.details.SO_Data.Line_Item_Count : '',
 			Math.ceil(result.jobRunResponse.executionTime / 1000),
 			new Date(result.jobRunResponse.lastUpdated).toDateString(),
 			new Date(result.jobRunResponse.lastUpdated).toTimeString().substr(0,8),
 			result.runStatusResponse.length > 2 ? Math.ceil((Date.parse(result.runStatusResponse[1].updated) - Date.parse(result.runStatusResponse[0].updated)) / 1000) : 'n/a',
 			result.jobRunResponse.runStatus === 'failed' ? result.runStatusResponse[2].detail : '',
 			result.jobRunResponse.triggerName,
-			result.runLogResponse[0] && result.runLogResponse[0].content && result.runLogResponse[0].content.E5ZData ? result.runLogResponse[0].content.E5ZData.Bot_Status : '',
-		 	result.runLogResponse[0] && result.runLogResponse[0].content && result.runLogResponse[0].content.SO_Data ? result.runLogResponse[0].content.SO_Data.Total_Items : '',			
-			result.runStatusResponse.length > 2 && result.runLogResponse[0] && result.runLogResponse[0].content && result.runLogResponse[0].content.SO_Data && result.runLogResponse[0].content.SO_Data.StartUpdateTime ? Math.ceil((Date.parse(result.runStatusResponse[2].updated) - Date.parse(result.runLogResponse[0].content.SO_Data.StartUpdateTime)) / 1000) : 'n/a'			
+			result.details && result.details.E5ZData ? result.details.E5ZData.Bot_Status : '',
+		 	result.details && result.details.SO_Data ? result.details.SO_Data.Total_Items : '',			
+			result.runStatusResponse.length > 2 && result.details && result.details.SO_Data && result.details.SO_Data.StartUpdateTime ? Math.ceil((Date.parse(result.runStatusResponse[2].updated) - Date.parse(result.details.SO_Data.StartUpdateTime)) / 1000) : 'n/a'			
 		 ]);    
      }});
      document.title='Done';
