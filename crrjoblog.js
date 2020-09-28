@@ -52,7 +52,7 @@ for (var i in data.data) {
 			runUid, 
 			result.jobRunResponse.runStatus, 
 			result.details ? result.details.Input.SONo : '',
-			result.details && result.details.SO_Data ? "'" + result.details.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(",") : '',
+			result.details && result.details.SO_Data && typeof result.details.SO_Data.Items_Updated === 'object' ? "'" + result.details.SO_Data.Items_Updated.map(x => x.SalesOrderItem).join(",") : '',
 			result.details && result.details.SO_Data ? result.details.SO_Data.Line_Item_Count : '',
 			Math.ceil(result.jobRunResponse.executionTime / 1000),
 			new Date(result.jobRunResponse.lastUpdated).toDateString(),
