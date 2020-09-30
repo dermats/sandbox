@@ -36,7 +36,7 @@ var tableId = document.querySelectorAll("[id^=__table]")[0].id;
 var oTable =  sap.ui.getCore().byId(tableId);
 var data = oTable.getData();
 var details = []
-var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger', 'BotStatus', 'TotalItems', 'TimeProcessingLineItems']];
+var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger', 'BotStatus', 'TotalItems', 'TimeProcessingLineItems', 'ItemUpdateStatus']];
 for (var i in data.data) {
      var runUid = data.data[i].runUid; 
      document.title = 'Get ' + runUid;
@@ -62,7 +62,8 @@ for (var i in data.data) {
 			result.jobRunResponse.triggerName,
 			result.details && result.details.E5ZData ? result.details.E5ZData.Bot_Status : '',
 		 	result.details && result.details.SO_Data ? result.details.SO_Data.Total_Items : '',			
-			result.runStatusResponse.length > 2 && result.details && result.details.SO_Data && result.details.SO_Data.StartUpdateTime ? Math.ceil((Date.parse(result.runStatusResponse[2].updated) - Date.parse(result.details.SO_Data.StartUpdateTime)) / 1000) : 'n/a'			
+			result.runStatusResponse.length > 2 && result.details && result.details.SO_Data && result.details.SO_Data.StartUpdateTime ? Math.ceil((Date.parse(result.runStatusResponse[2].updated) - Date.parse(result.details.SO_Data.StartUpdateTime)) / 1000) : 'n/a',
+			result.details && result.details.SO_Data && typeof result.details.SO_Data.Item_Level_Status === 'object' ? result.details.SO_Data.Item_Level_Status.join(";") : '',			
 		 ]);    
      }});
      document.title='Done';
