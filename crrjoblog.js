@@ -32,11 +32,19 @@ function exportToCsv(filename, rows) {
 	}
 }
 
+function findSoWbsItemMismatch (soNumber, aStatus) {
+	for (i in aStatus) {
+		if (aStatus[i].indexOf("Value") > -1 && aStatus[i].endsWith("Value: " + soNumber) !== true) {
+			return 'X';
+		}
+	}
+}
+
 var tableId = document.querySelectorAll("[id^=__table]")[0].id;
 var oTable =  sap.ui.getCore().byId(tableId);
 var data = oTable.getData();
 var details = []
-var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger', 'BotStatus', 'TotalItems', 'TimeProcessingLineItems', 'ItemUpdateStatus']];
+var detailsCsv = [['Id', 'Status', 'SO', 'SoItems', 'ItemCount', 'ExecTime', 'LastUpdateDate', 'LastUpdateTime', 'TimeInQueue', 'failedStep', 'Trigger', 'BotStatus', 'TotalItems', 'TimeProcessingLineItems', 'ItemUpdateStatus', 'SoWbsMismatch']];
 for (var i in data.data) {
      var runUid = data.data[i].runUid; 
      document.title = 'Get ' + runUid;
@@ -64,6 +72,7 @@ for (var i in data.data) {
 		 	result.details && result.details.SO_Data ? result.details.SO_Data.Total_Items : '',			
 			result.runStatusResponse.length > 2 && result.details && result.details.SO_Data && result.details.SO_Data.StartUpdateTime ? Math.ceil((Date.parse(result.runStatusResponse[2].updated) - Date.parse(result.details.SO_Data.StartUpdateTime)) / 1000) : 'n/a',
 			result.details && result.details.SO_Data && typeof result.details.SO_Data.Item_Level_Status === 'object' ? result.details.SO_Data.Item_Level_Status.join(";") : '',			
+			result.details && result.details.SO_Data && typeof result.details.SO_Data.Item_Level_Status === 'object' ? findSoWbsItemMismatch(result.details.Input.SONo, result.details.SO_Data.Item_Level_Status) : '',			
 		 ]);    
      }});
      document.title='Done';
